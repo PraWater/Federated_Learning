@@ -19,6 +19,10 @@ loss_gauge = Gauge("model_loss", "Current loss of the global model")
 # Define a gauge to track the global model f1 score
 f1_gauge = Gauge("model_f1score", "Current f1 score of the global model")
 
+auc_gauge = Gauge("model_auc", "Current AUC score of the global model")
+
+
+
 # Parse command line arguments
 parser = argparse.ArgumentParser(description="Flower Server")
 parser.add_argument(
@@ -48,5 +52,5 @@ if __name__ == "__main__":
     start_http_server(8000)
 
     # Initialize Strategy Instance and Start FL Server
-    strategy_instance = FedCustom(accuracy_gauge=accuracy_gauge, loss_gauge=loss_gauge, f1_gauge=f1_gauge)
+    strategy_instance = FedCustom(accuracy_gauge=accuracy_gauge, loss_gauge=loss_gauge, f1_gauge=f1_gauge, auc_gauge=auc_gauge)
     start_fl_server(strategy=strategy_instance, rounds=args.number_of_rounds)

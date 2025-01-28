@@ -18,13 +18,12 @@
   "description": "Simple exporter for cadvisor and application metrics",
   "editable": true,
   "fiscalYearStartMonth": 0,
-  "gnetId": 14282,
   "graphTooltip": 0,
-  "id": 1,
+  "id": 3,
   "links": [],
-  "liveNow": false,
   "panels": [
     {
+      "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -32,6 +31,7 @@
         "y": 0
       },
       "id": 22,
+      "panels": [],
       "title": "Application metrics",
       "type": "row"
     },
@@ -50,6 +50,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 0,
             "gradientMode": "none",
@@ -110,11 +111,13 @@
           "showLegend": false
         },
         "tooltip": {
+          "hideZeros": false,
           "maxHeight": 600,
           "mode": "single",
           "sort": "none"
         }
       },
+      "pluginVersion": "11.5.0",
       "targets": [
         {
           "datasource": {
@@ -151,6 +154,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 0,
             "gradientMode": "none",
@@ -208,11 +212,13 @@
           "showLegend": false
         },
         "tooltip": {
+          "hideZeros": false,
           "maxHeight": 600,
           "mode": "single",
           "sort": "none"
         }
       },
+      "pluginVersion": "11.5.0",
       "targets": [
         {
           "datasource": {
@@ -249,6 +255,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 0,
             "gradientMode": "none",
@@ -298,9 +305,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 1
+        "y": 9
       },
-      "id": 23,
+      "id": 24,
       "options": {
         "legend": {
           "calcs": [],
@@ -309,11 +316,13 @@
           "showLegend": false
         },
         "tooltip": {
+          "hideZeros": false,
           "maxHeight": 600,
           "mode": "single",
           "sort": "none"
         }
       },
+      "pluginVersion": "11.5.0",
       "targets": [
         {
           "datasource": {
@@ -336,25 +345,113 @@
       "type": "timeseries"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "db69454e-e558-479e-b4fc-80db52bf91da"
+      },
+      "description": "Averaged federated Area Under the Curve across clients",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 9
+      },
+      "id": 25,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.5.0",
+      "targets": [
+        {
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "model_auc",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Model Area Under the Curve",
+      "type": "timeseries"
+    },
+    {
       "collapsed": false,
-      "datasource": {},
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 9
+        "y": 17
       },
       "id": 8,
       "panels": [],
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "db69454e-e558-479e-b4fc-80db52bf91da"
-          },
-          "refId": "A"
-        }
-      ],
       "title": "CPU",
       "type": "row"
     },
@@ -372,6 +469,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 10,
             "gradientMode": "none",
@@ -465,7 +563,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 10
+        "y": 18
       },
       "id": 15,
       "options": {
@@ -479,12 +577,13 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "maxHeight": 600,
           "mode": "multi",
           "sort": "none"
         }
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "11.5.0",
       "targets": [
         {
           "datasource": {
@@ -505,24 +604,14 @@
     },
     {
       "collapsed": false,
-      "datasource": {},
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 17
+        "y": 25
       },
       "id": 11,
       "panels": [],
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "db69454e-e558-479e-b4fc-80db52bf91da"
-          },
-          "refId": "A"
-        }
-      ],
       "title": "Memory",
       "type": "row"
     },
@@ -540,6 +629,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 10,
             "gradientMode": "none",
@@ -632,7 +722,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 18
+        "y": 26
       },
       "id": 9,
       "options": {
@@ -646,12 +736,13 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "maxHeight": 600,
           "mode": "multi",
           "sort": "none"
         }
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "11.5.0",
       "targets": [
         {
           "datasource": {
@@ -684,6 +775,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 10,
             "gradientMode": "none",
@@ -776,7 +868,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 18
+        "y": 26
       },
       "id": 14,
       "options": {
@@ -790,12 +882,13 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "maxHeight": 600,
           "mode": "multi",
           "sort": "none"
         }
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "11.5.0",
       "targets": [
         {
           "datasource": {
@@ -816,24 +909,14 @@
     },
     {
       "collapsed": false,
-      "datasource": {},
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 26
+        "y": 34
       },
       "id": 2,
       "panels": [],
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "db69454e-e558-479e-b4fc-80db52bf91da"
-          },
-          "refId": "A"
-        }
-      ],
       "title": "Network",
       "type": "row"
     },
@@ -851,6 +934,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 10,
             "gradientMode": "none",
@@ -943,7 +1027,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 27
+        "y": 35
       },
       "id": 4,
       "options": {
@@ -957,12 +1041,13 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "maxHeight": 600,
           "mode": "multi",
           "sort": "none"
         }
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "11.5.0",
       "targets": [
         {
           "datasource": {
@@ -995,6 +1080,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 10,
             "gradientMode": "none",
@@ -1087,7 +1173,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 27
+        "y": 35
       },
       "id": 6,
       "options": {
@@ -1101,12 +1187,13 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "maxHeight": 600,
           "mode": "multi",
           "sort": "none"
         }
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "11.5.0",
       "targets": [
         {
           "datasource": {
@@ -1126,27 +1213,14 @@
     },
     {
       "collapsed": false,
-      "datasource": {
-        "type": "prometheus",
-        "uid": "db69454e-e558-479e-b4fc-80db52bf91da"
-      },
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 35
+        "y": 43
       },
       "id": 19,
       "panels": [],
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "db69454e-e558-479e-b4fc-80db52bf91da"
-          },
-          "refId": "A"
-        }
-      ],
       "title": "Misc",
       "type": "row"
     },
@@ -1224,7 +1298,7 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 36
+        "y": 44
       },
       "id": 17,
       "options": {
@@ -1240,7 +1314,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "11.0.0",
+      "pluginVersion": "11.5.0",
       "targets": [
         {
           "datasource": {
@@ -1294,15 +1368,15 @@
       "type": "table"
     }
   ],
+  "preload": false,
   "refresh": "5s",
-  "schemaVersion": 39,
+  "schemaVersion": 40,
   "tags": [],
   "templating": {
     "list": [
       {
         "allValue": ".*",
         "current": {
-          "selected": false,
           "text": "All",
           "value": "$__all"
         },
@@ -1311,10 +1385,8 @@
           "uid": "db69454e-e558-479e-b4fc-80db52bf91da"
         },
         "definition": "label_values({__name__=~\"container.*\"},instance)",
-        "hide": 0,
         "includeAll": true,
         "label": "Host",
-        "multi": false,
         "name": "host",
         "options": [],
         "query": {
@@ -1323,17 +1395,12 @@
         },
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
         "sort": 5,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "allValue": ".*",
         "current": {
-          "selected": false,
           "text": "All",
           "value": "$__all"
         },
@@ -1342,10 +1409,8 @@
           "uid": "db69454e-e558-479e-b4fc-80db52bf91da"
         },
         "definition": "label_values({__name__=~\"container.*\", instance=~\"$host\"},name)",
-        "hide": 0,
         "includeAll": true,
         "label": "Container",
-        "multi": false,
         "name": "container",
         "options": [],
         "query": {
@@ -1354,12 +1419,7 @@
         },
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       }
     ]
   },
@@ -1367,11 +1427,10 @@
     "from": "now-15m",
     "to": "now"
   },
-  "timeRangeUpdatedDuringEditOrView": false,
   "timepicker": {},
   "timezone": "",
   "title": "Flower Dashboard",
   "uid": "fcf2a8da-792c-4b9f-a22f-876820b53c2f",
-  "version": 3,
+  "version": 1,
   "weekStart": ""
 }

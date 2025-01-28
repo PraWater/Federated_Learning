@@ -5,7 +5,7 @@ import os
 import numpy as np
 import flwr as fl
 import tensorflow as tf
-from sklearn.metrics import f1_score
+from sklearn.metrics import f1_score, roc_auc_score
 from helpers.load_data import load_data
 
 from model.model import Model
@@ -43,6 +43,7 @@ model = Model(learning_rate=args.learning_rate)
 
 # Compile the model
 model.compile()
+
 
 
 class Client(fl.client.NumPyClient):
@@ -93,15 +94,28 @@ class Client(fl.client.NumPyClient):
         loss, accuracy = model.get_model().evaluate(
             self.x_test, self.y_test, batch_size=self.args.batch_size
         )
-        y_pred = model.get_model().predict(self.x_test, verbose=False)
-        y_pred = np.argmax(y_pred, axis=1).reshape(
-            -1, 1
-        )  # MobileNetV2 outputs 10 possible classes, argmax returns just the most probable
+        
+        # Get predicted probabilities for AUC calculation (use softmax for multi-class classification)
+        y_pred_prob = model.get_model().predict(self.x_test, verbose=False)
+        
+        # Calculate AUC (using true labels and predicted probabilities)
+        auc = roc_auc_score(self.y_test, y_pred_prob, multi_class="ovr", average="macro")
 
+        # Convert predictions to class labels for F1 score
+        y_pred = np.argmax(y_pred_prob, axis=1).reshape(-1, 1)
+
+        # Calculate F1 score
         f1 = f1_score(self.y_test, y_pred, average="micro")
+        metrics = {
+        "accuracy": float(accuracy),
+        "f1": f1,
+        "auc":auc
 
-        # Return the loss, the number of examples evaluated on and the accuracy
-        return float(loss), len(self.x_test), {"accuracy": float(accuracy), "f1": f1}
+        }
+
+        # Return the loss, the number of examples evaluated on, and the metrics (accuracy, f1, auc)
+        return float(loss), len(self.x_test),metrics
+
 
 
 # Function to Start the Client

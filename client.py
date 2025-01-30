@@ -75,13 +75,6 @@ class Client(fl.client.NumPyClient):
             self.x_train, self.y_train, batch_size=self.args.batch_size
         )
 
-        #########################################################################
-        y_pred_train = model.get_model().predict(self.x_train, verbose=False)
-        y_pred_train = np.argmax(y_pred_train, axis=1).reshape(-1, 1)
-        mse_train = np.mean((self.y_train - y_pred_train) ** 2)
-        #########################################################################
-
-
         # Calculate evaluation metric
         results = {
             "accuracy": float(history.history["accuracy"][-1])

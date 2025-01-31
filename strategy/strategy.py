@@ -18,6 +18,7 @@ class FedCustom(fl.server.strategy.FedAvg):
         loss_gauge: Gauge = None, 
         f1_gauge: Gauge = None,
         auc_gauge: Gauge = None,  # Add AUC gauge
+        mse_gauge: Gauge = None,  # Add MSE gauge
         *args, 
         **kwargs
     ):
@@ -27,6 +28,7 @@ class FedCustom(fl.server.strategy.FedAvg):
         self.loss_gauge = loss_gauge
         self.f1_gauge = f1_gauge
         self.auc_gauge = auc_gauge  # Initialize AUC gauge
+        self.mse_gauge = mse_gauge  # Initialize MSE gauge
 
     def __repr__(self) -> str:
         return "FedCustom"
@@ -80,17 +82,31 @@ class FedCustom(fl.server.strategy.FedAvg):
             sum(auc_scores) / sum(examples) if sum(examples) != 0 else 0
         )
 
+        # Calculate weighted average for MSE
+        mse_values = [
+        evaluate_res.metrics["mse"] * evaluate_res.num_examples
+        for _, evaluate_res in results
+        ]
+
+        mse_aggregated = (
+            sum(mse_values) / sum(examples) if sum(examples) != 0 else 0
+        )
+
+
+
         # Update the Prometheus gauges with the latest aggregated values
         self.accuracy_gauge.set(accuracy_aggregated)
         self.loss_gauge.set(loss_aggregated)
         self.f1_gauge.set(f1_scores_aggregated)
-        self.auc_gauge.set(auc_aggregated)  
+        self.auc_gauge.set(auc_aggregated)
+        self.mse_gauge.set(mse_aggregated)  
 
         metrics_aggregated = {
             "loss": loss_aggregated, 
             "accuracy": accuracy_aggregated, 
             "f1": f1_scores_aggregated,
-            "auc": auc_aggregated  
+            "auc": auc_aggregated,
+            "mse": mse_aggregated  
         }
 
         return loss_aggregated, metrics_aggregated

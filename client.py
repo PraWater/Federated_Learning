@@ -77,7 +77,7 @@ class Client(fl.client.NumPyClient):
 
         # Calculate evaluation metric
         results = {
-            "accuracy": float(history.history["accuracy"][-1]),
+            "accuracy": float(history.history["accuracy"][-1])
         }
 
         # Get the parameters after training
@@ -106,11 +106,12 @@ class Client(fl.client.NumPyClient):
 
         # Calculate F1 score
         f1 = f1_score(self.y_test, y_pred, average="micro")
+        mse = np.mean((self.y_test - y_pred) ** 2)  # Compute Mean Square Error  ##################################
         metrics = {
         "accuracy": float(accuracy),
         "f1": f1,
-        "auc":auc
-
+        "auc":auc,
+        "mse":mse ####################
         }
 
         # Return the loss, the number of examples evaluated on, and the metrics (accuracy, f1, auc)

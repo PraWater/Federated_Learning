@@ -1,15 +1,14 @@
 import logging
 
 import numpy as np
-import tensorflow as tf
-from flwr_datasets import FederatedDataset
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 logging.basicConfig(level=logging.INFO)  # Configure logging
 logger = logging.getLogger(__name__)  # Create logger for the module
 
 
 def load_data(data_sampling_percentage=0.5, client_id=1, total_clients=2):
-    """Load federated dataset partition based on client ID.
+    """Load MRI dataset, ensure global shuffling, and return client-specific NumPy arrays.
 
     Args:
         data_sampling_percentage (float): Percentage of the dataset to use for training.
@@ -19,20 +18,56 @@ def load_data(data_sampling_percentage=0.5, client_id=1, total_clients=2):
     Returns:
         Tuple of arrays: `(x_train, y_train), (x_test, y_test)`.
     """
+    IMG_SIZE = (224, 224)
+    BATCH_SIZE = 32
 
-    # Download and partition dataset
-    fds = FederatedDataset(dataset="cifar10", partitioners={"train": total_clients})
-    partition = fds.load_partition(client_id - 1, "train")
-    partition.set_format("numpy")
+    train_dir = "/app/dataset/Training"
+    test_dir = "/app/dataset/Testing"
 
-    # Divide data on each client: 80% train, 20% test
-    partition = partition.train_test_split(test_size=0.2, seed=42)
-    x_train, y_train = partition["train"]["img"] / 255.0, partition["train"]["label"]
-    x_test, y_test = partition["test"]["img"] / 255.0, partition["test"]["label"]
+    datagen = ImageDataGenerator(rescale=1.0 / 255)
 
-    # Apply data sampling
+    train_generator = datagen.flow_from_directory(
+        train_dir,
+        target_size=IMG_SIZE,
+        batch_size=BATCH_SIZE,
+        class_mode="categorical",
+        shuffle=False  # No shuffle here to ensure consistent partitioning
+    )
+
+    test_generator = datagen.flow_from_directory(
+        test_dir,
+        target_size=IMG_SIZE,
+        batch_size=BATCH_SIZE,
+        class_mode="categorical",
+        shuffle=False
+    )
+
+    def generator_to_numpy(generator):
+        x_data = []
+        y_data = []
+        for _ in range(len(generator)):
+            x_batch, y_batch = generator.next()
+            x_data.append(x_batch)
+            y_data.append(y_batch)
+        return np.concatenate(x_data, axis=0), np.concatenate(y_data, axis=0)
+
+    x_train_full, y_train_full = generator_to_numpy(train_generator)
+    x_test, y_test = generator_to_numpy(test_generator)
+
+    np.random.seed(42)  # Ensures reproducibility
+    indices = np.arange(len(x_train_full))
+    np.random.shuffle(indices)
+    x_train_full, y_train_full = x_train_full[indices], y_train_full[indices]
+
+    total_samples = len(x_train_full)
+    samples_per_client = total_samples // total_clients
+    start_idx = (client_id - 1) * samples_per_client
+    end_idx = start_idx + samples_per_client
+
+    x_train, y_train = x_train_full[start_idx:end_idx], y_train_full[start_idx:end_idx]
+
     num_samples = int(data_sampling_percentage * len(x_train))
-    indices = np.random.choice(len(x_train), num_samples, replace=False)
-    x_train, y_train = x_train[indices], y_train[indices]
+    sampled_indices = np.random.choice(len(x_train), num_samples, replace=False)
+    x_train, y_train = x_train[sampled_indices], y_train[sampled_indices]
 
     return (x_train, y_train), (x_test, y_test)

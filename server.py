@@ -34,6 +34,15 @@ parser.add_argument(
 args = parser.parse_args()
 
 
+def weighted_average(metrics):
+    # Multiply accuracy of each client by number of examples used
+    accuracies = [num_examples * m["accuracy"] for num_examples, m in metrics]
+    examples = [num_examples for num_examples, _ in metrics]
+
+    # Aggregate and return custom metric (weighted average)
+    return {"accuracy": sum(accuracies) / sum(examples)}
+
+
 # Function to Start Federated Learning Server
 def start_fl_server(strategy, rounds):
     try:
@@ -52,5 +61,5 @@ if __name__ == "__main__":
     start_http_server(8000)
 
     # Initialize Strategy Instance and Start FL Server
-    strategy_instance = FedCustom(accuracy_gauge=accuracy_gauge, loss_gauge=loss_gauge, f1_gauge=f1_gauge, auc_gauge=auc_gauge, mse_gauge=mse_gauge)##############
+    strategy_instance = FedCustom(accuracy_gauge=accuracy_gauge, loss_gauge=loss_gauge, f1_gauge=f1_gauge, auc_gauge=auc_gauge, mse_gauge=mse_gauge, fit_metrics_aggregation_fn=weighted_average,)
     start_fl_server(strategy=strategy_instance, rounds=args.number_of_rounds)

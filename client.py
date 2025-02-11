@@ -6,6 +6,7 @@ import numpy as np
 import flwr as fl
 from sklearn.metrics import f1_score, roc_auc_score
 from helpers.load_data import load_data
+import tensorflow as tf
 
 from model.model import Model
 
@@ -36,6 +37,19 @@ parser.add_argument(
 )
 
 args = parser.parse_args()
+
+# Make a virtual GPU to ensure VRAM is shared equally between clients.
+gpus = tf.config.list_physical_devices('GPU')
+if gpus:
+    try:
+        tf.config.set_logical_device_configuration(
+            gpus[0],
+            [tf.config.LogicalDeviceConfiguration(memory_limit=20480 / args.total_clients)]  # 20GB divided by number of clients
+        )
+        logical_gpus = tf.config.list_logical_devices('GPU')
+        logger.info(f"{len(gpus)} Physical GPU(s), {len(logical_gpus)} Logical GPU(s)")
+    except RuntimeError as e:
+        logger.error(f"Error configuring virtual GPU: {e}")
 
 # Create an instance of the model and pass the learning rate and number of classes as arguments
 model = Model(learning_rate=args.learning_rate, num_classes=4)
@@ -68,10 +82,11 @@ class Client(fl.client.NumPyClient):
         # Set the weights of the model
         model.get_model().set_weights(parameters)
 
-        # Train the model
-        history = model.get_model().fit(
-            self.x_train, self.y_train, batch_size=self.args.batch_size
-        )
+        # Train the model using GPU
+        with tf.device('/GPU:0'):
+            history = model.get_model().fit(
+                self.x_train, self.y_train, batch_size=self.args.batch_size
+            )
 
         # Calculate evaluation metric
         results = {
@@ -103,8 +118,7 @@ class Client(fl.client.NumPyClient):
         y_pred = np.argmax(y_pred_prob, axis=1).reshape(-1, 1)
 
         # Calculate F1 score
-        # f1 = f1_score(self.y_test, y_pred, average="micro")
-        f1 = 2  # f1_score not working, hardcoded for now.
+        f1 = f1_score(self.y_test, y_pred, average="micro")
         mse = np.mean((self.y_test - y_pred) ** 2)  # Compute Mean Square Error  ##################################
         metrics = {
             "accuracy": float(accuracy),

@@ -129,7 +129,9 @@ services:
       - "{6000 + i}:{6000 + i}"
     depends_on:
       - server
+    runtime: nvidia
     environment:
+      NVIDIA_VISIBLE_DEVICES: all
       FLASK_RUN_PORT: {6000 + i}
       container_name: client{i}
       DOCKER_HOST_IP: host.docker.internal

@@ -6,7 +6,7 @@ from tensorflow.keras.applications import ResNet50
 class Model:
     def __init__(self, learning_rate, num_classes):
         self.learning_rate = learning_rate
-        self.loss_function = tf.keras.losses.CategoricalCrossentropy()  # Updated for categorical labels
+        self.loss_function = tf.keras.losses.SparseCategoricalCrossentropy()
 
         # Load ResNet50 with pretrained weights
         self.base_model = ResNet50(weights="imagenet", include_top=False, input_shape=(224, 224, 3))
